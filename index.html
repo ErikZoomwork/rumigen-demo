@@ -913,6 +913,7 @@
             max-height: 100dvh;
             height: auto;
             z-index: 250;
+            transition: left 0.8s ease, right 0.8s ease, transform 0.8s ease, width 0.8s ease, max-height 0.8s ease;
         }
 
         @media (max-width: 1200px) {
@@ -928,6 +929,14 @@
                 width: 70vw;
                 max-height: 70dvh;
                 bottom: env(safe-area-inset-bottom, 0);
+            }
+
+            .emma-character.answered {
+                left: auto;
+                right: 20%;
+                transform: none;
+                width: 50vw;
+                max-height: 60dvh;
             }
         }
 
@@ -1646,6 +1655,7 @@
                         });
                         
                         document.querySelector('.questions-panel').classList.add('hidden');
+                        document.querySelector('.emma-character').classList.add('answered');
                         document.querySelector('.parallax-container').classList.add('fade-out');
                         setTimeout(() => {
                             document.querySelector('.boerenkraam-container').classList.add('active');
