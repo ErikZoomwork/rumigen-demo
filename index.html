@@ -23,7 +23,7 @@
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
+            height: 100dvh;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.5s ease;
@@ -274,7 +274,7 @@
             .character-card {
                 min-width: 260px;
                 flex: 0 0 85vw;
-                max-height: 70vh;
+                max-height: 70dvh;
             }
 
             .character-image {
@@ -377,7 +377,7 @@
         .parallax-container {
             position: relative;
             width: 100vw;
-            height: 100vh;
+            height: 100dvh;
             overflow: hidden;
             transition: opacity 1.5s ease, transform 1.5s ease;
         }
@@ -392,14 +392,14 @@
             bottom: 0;
             left: 0;
             width: auto;
-            height: 100vh;
+            height: 100dvh;
             display: flex;
             white-space: nowrap;
         }
 
         .parallax-layer img,
         .parallax-layer object {
-            height: 100vh;
+            height: 100dvh;
             width: auto;
             pointer-events: none;
             display: inline-block;
@@ -408,7 +408,7 @@
         }
 
         .layer-segment {
-            height: 100vh;
+            height: 100dvh;
             width: auto;
             flex-shrink: 0;
             position: relative;
@@ -419,7 +419,7 @@
         .layer-segment object,
         .layer-segment img {
             width: auto;
-            height: 100vh;
+            height: 100dvh;
             display: block;
         }
 
@@ -524,7 +524,7 @@
             left: 0;
             right: auto;
             width: 50vw;
-            height: 100vh;
+            height: 100dvh;
             background: rgba(255, 255, 255, 0.95);
             padding: 40px 30px;
             display: flex;
@@ -802,7 +802,7 @@
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                min-height: 100vh;
+                min-height: 100dvh;
             }
 
             .rumigen-logo {
@@ -900,7 +900,7 @@
             right: 25%;
             transform: translateX(50%);
             width: min(800px, 50vw);
-            max-height: 100vh;
+            max-height: 100dvh;
             height: auto;
             z-index: 250;
         }
@@ -923,7 +923,7 @@
         @media (max-width: 480px) {
             .emma-character {
                 width: 45vw;
-                max-height: 55vh;
+                max-height: 55dvh;
             }
         }
 
@@ -946,7 +946,7 @@
         .layer object {
             width: 100%;
             height: auto;
-            max-height: 100vh;
+            max-height: 100dvh;
             object-fit: contain;
             object-position: bottom;
             pointer-events: none;
@@ -1667,3 +1667,4 @@
     </script>
 </body>
 </html>
+
