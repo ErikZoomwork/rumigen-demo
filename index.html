@@ -371,7 +371,7 @@
 
         /* Game Screen Styles */
         #game-screen {
-            background: #87CEEB;
+            background: linear-gradient(180deg, #87CEEB 0%, #B0D8F0 100%);
         }
 
         .parallax-container {
@@ -424,7 +424,7 @@
         }
 
         /* Layer z-indices */
-        .layer-6 { z-index: 1; }
+        .layer-6 { z-index: 1; display: none; }
         .layer-5 { z-index: 2; }
         .layer-4 { z-index: 3; }
         .layer-3 { z-index: 4; }
@@ -463,6 +463,7 @@
             transform: scale(0.95);
             transition: opacity 1.5s ease, transform 1.5s ease;
             pointer-events: none;
+            background: linear-gradient(180deg, #A8D5BA 0%, #C8E6C9 100%);
         }
 
         .boerenkraam-container.active {
@@ -490,7 +491,7 @@
             object-position: bottom left;
         }
 
-        .boerenkraam-container .layer-6 { z-index: 1; animation: boerenkraamZoom 40s ease-in-out infinite; }
+        .boerenkraam-container .layer-6 { z-index: 1; display: none; animation: none; }
         .boerenkraam-container .layer-5 { z-index: 2; display: flex !important; width: auto !important; animation: scrollRight 40s linear infinite !important; }
         .boerenkraam-container .layer-4 { z-index: 3; animation: boerenkraamZoom 25s ease-in-out infinite; }
         .boerenkraam-container .layer-3 { z-index: 4; animation: boerenkraamZoom 25s ease-in-out infinite; }
@@ -637,6 +638,37 @@
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
+            .tradeoff-modal {
+                top: 20px;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: calc(100% - 40px);
+                max-width: none;
+                display: flex;
+                align-items: center;
+            }
+
+            .tradeoff-content {
+                padding: 25px 20px;
+                width: 100%;
+            }
+
+            .tradeoff-title {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+
+            .tradeoff-choice {
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+
+            .tradeoff-explanation {
+                font-size: 14px;
+                line-height: 1.6;
+            }
+
             .questions-logo {
                 max-width: 140px;
                 margin-bottom: 15px;
@@ -707,6 +739,13 @@
 
             #character-screen .emma-character {
                 display: block;
+            }
+
+            .restart-button {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 24px;
+                font-size: 14px;
             }
         }
 
