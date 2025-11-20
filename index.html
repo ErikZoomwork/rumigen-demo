@@ -464,6 +464,7 @@
             transition: opacity 1.5s ease, transform 1.5s ease;
             pointer-events: none;
             background: #b8e6e3;
+            overflow: hidden;
         }
 
         .boerenkraam-container.active {
@@ -477,7 +478,8 @@
             bottom: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
+            height: auto;
+            min-height: 100vh;
             display: flex;
             align-items: flex-end;
             justify-content: flex-start;
@@ -486,9 +488,9 @@
         .boerenkraam-layer object {
             width: 100%;
             height: auto;
-            min-height: 100vh;
-            object-fit: cover;
-            object-position: bottom left;
+            display: block;
+            object-fit: contain;
+            object-position: bottom center;
         }
 
         .boerenkraam-container .layer-6 { z-index: 1; display: none; animation: none; }
@@ -520,6 +522,7 @@
             position: fixed;
             top: 0;
             left: 0;
+            right: auto;
             width: 50vw;
             height: 100vh;
             background: rgba(255, 255, 255, 0.95);
@@ -642,34 +645,43 @@
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .tradeoff-modal {
-                top: 20px;
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: calc(100% - 40px);
-                max-width: none;
+                top: 0;
+                bottom: auto;
+                left: 0;
+                right: 0;
+                transform: none;
+                width: 100vw;
+                max-width: 100vw;
+                height: auto;
+                max-height: 50vh;
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
+                justify-content: flex-start;
+                padding: 0;
+                overflow: hidden;
+                z-index: 100;
             }
 
             .tradeoff-content {
-                padding: 25px 20px;
-                width: 100%;
+                padding: 15px;
+                width: calc(100vw - 20px);
+                margin: 10px;
+                box-sizing: border-box;
             }
 
             .tradeoff-title {
-                font-size: 18px;
-                margin-bottom: 10px;
+                font-size: 14px;
+                margin-bottom: 5px;
             }
 
             .tradeoff-choice {
-                font-size: 16px;
-                margin-bottom: 8px;
+                font-size: 12px;
+                margin-bottom: 4px;
             }
 
             .tradeoff-explanation {
-                font-size: 14px;
-                line-height: 1.6;
+                font-size: 11px;
+                line-height: 1.35;
             }
 
             .questions-logo {
@@ -734,10 +746,6 @@
 
             .option-description {
                 font-size: 13px;
-            }
-
-            .emma-character {
-                display: none;
             }
 
             #character-screen .emma-character {
@@ -962,15 +970,28 @@
         /* Trade-off Banner */
         .tradeoff-modal {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 700px;
+            top: 0;
+            left: 0;
+            width: 50vw;
+            height: 100vh;
             opacity: 0;
             pointer-events: none;
             z-index: 10000;
             transition: opacity 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 30px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .tradeoff-modal {
+                width: 100vw;
+                padding: 0;
+                justify-content: flex-start;
+                overflow: hidden;
+            }
         }
 
         .tradeoff-modal.active {
@@ -979,11 +1000,10 @@
         }
 
         .tradeoff-content {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            border-left: 5px solid #667eea;
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
         }
 
         .tradeoff-title {
