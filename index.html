@@ -48,6 +48,13 @@
             max-width: 900px;
         }
 
+        .rumigen-logo {
+            max-width: 300px;
+            width: 80%;
+            height: auto;
+            margin-bottom: 2rem;
+        }
+
         .game-title {
             font-size: 3rem;
             font-weight: 700;
@@ -88,7 +95,8 @@
             align-items: center;
             justify-content: center;
             background: #f8fafc;
-            padding: 40px;
+            padding: 20px;
+            overflow-y: auto;
         }
 
         .character-container {
@@ -140,6 +148,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             flex: 0 0 calc(33.333% - 1.35rem);
             min-width: 280px;
+            max-width: 450px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -495,10 +504,10 @@
             width: 50vw;
             height: 100vh;
             background: rgba(255, 255, 255, 0.95);
-            padding: 60px 50px;
+            padding: 40px 30px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             overflow-y: auto;
             z-index: 300;
             transition: opacity 0.8s ease;
@@ -510,12 +519,15 @@
         }
 
         .question-header {
-            font-size: 14px;
-            color: #667eea;
-            font-weight: 600;
+            display: none;
+        }
+
+        .questions-logo {
+            max-width: 15vw;
+            width: auto;
+            height: auto;
             margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            display: block;
         }
 
         .emma-intro {
@@ -610,32 +622,47 @@
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
+            .questions-logo {
+                max-width: 140px;
+                margin-bottom: 15px;
+            }
+
+            .rumigen-logo {
+                max-width: 220px;
+            }
+
             .questions-panel {
                 width: 100vw;
-                padding: 30px 20px;
+                padding: 20px 20px 30px 20px;
                 justify-content: flex-start;
-                padding-top: 80px;
+                padding-top: 20px;
             }
 
             .question-header {
                 font-size: 12px;
-                margin-bottom: 15px;
+                margin-bottom: 12px;
             }
 
             .emma-intro {
-                padding: 15px;
-                margin-bottom: 20px;
-                font-size: 14px;
+                padding: 12px;
+                margin-bottom: 15px;
+                font-size: 13px;
             }
 
             .question-text {
-                font-size: 18px;
+                font-size: 20px;
                 margin-bottom: 20px;
+                line-height: 1.4;
             }
 
             .option-button {
-                padding: 15px 18px;
+                padding: 12px 15px;
                 border-radius: 12px;
+                gap: 10px;
+            }
+
+            .options-container {
+                gap: 12px;
             }
 
             .option-label {
@@ -662,6 +689,10 @@
             .emma-character {
                 display: none;
             }
+
+            #character-screen .emma-character {
+                display: block;
+            }
         }
 
         /* Emma Character */
@@ -672,7 +703,7 @@
             transform: translateX(50%);
             width: min(800px, 50vw);
             max-height: 100vh;
-            height: 100vh;
+            height: auto;
             z-index: 250;
         }
 
@@ -685,17 +716,15 @@
         @media (max-width: 768px) {
             .emma-character {
                 right: 50%;
-                width: 70vw;
-                max-width: 350px;
-                max-height: 85vh;
+                width: 60vw;
+                max-height: 70vh;
             }
         }
 
         @media (max-width: 480px) {
             .emma-character {
-                width: 65vw;
-                max-width: 280px;
-                max-height: 70vh;
+                width: 60vw;
+                max-height: 65vh;
             }
         }
 
@@ -718,6 +747,7 @@
         .layer object {
             width: 100%;
             height: auto;
+            max-height: 100vh;
             object-fit: contain;
             object-position: bottom;
             pointer-events: none;
@@ -746,7 +776,7 @@
         .restart-button {
             position: fixed;
             bottom: 30px;
-            left: 30px;
+            right: 30px;
             background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
             border: none;
@@ -766,16 +796,7 @@
         }
 
         .pilot-badge {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(102, 126, 234, 0.9);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 14px;
-            z-index: 9998;
+            display: none;
         }
 
         /* Trade-off Banner */
@@ -835,6 +856,7 @@
     <!-- Welcome Screen -->
     <div id="welcome-screen" class="screen active">
         <div class="welcome-content">
+            <img src="assets/images/rumigen-logo.png" alt="RUMIGEN" class="rumigen-logo">
             <h1 class="game-title">RUMIGEN Scenario Game</h1>
             <p class="game-subtitle">An interactive exploration of food system values and trade-offs</p>
             <button class="btn-primary" onclick="showCharacterSelection()">Start Game</button>
@@ -849,15 +871,6 @@
             <div class="character-selection-wrapper">
                 <button class="nav-arrow left" id="scroll-left" aria-label="Scroll left">‹</button>
                 <div class="character-grid" id="character-grid">
-                    <div class="character-card disabled">
-                        <img src="assets/images/Character - Luca.jpg" alt="Luca" class="character-image" onerror="this.style.display='none'">
-                        <div class="character-content">
-                            <div class="character-name">Luca</div>
-                            <div class="character-role">The young farmer</div>
-                            <div class="character-bio">Luca, 32, is a young, motivated farmer who inherited his family's farm in rural Netherlands. He wants to modernize his farm, produce sustainably, and run a profitable business—but these goals often compete. His journey makes him face tough decisions about what kind of farmer he wants to be.</div>
-                            <button class="select-btn">Coming Soon</button>
-                        </div>
-                    </div>
                     <div class="character-card" onclick="selectEmma()">
                         <img src="assets/images/Character - Emma.jpg" alt="Emma" class="character-image" onerror="this.style.display='none'">
                         <div class="character-content">
@@ -865,6 +878,15 @@
                             <div class="character-role">The active citizen</div>
                             <div class="character-bio">Emma, 28, lives in the city and works at an NGO with a focus on the environment. She enjoys cooking and browsing secondhand shops. Her friends come from all walks of life, and they often get into thoughtful (and fun) conversations about values, choices, and the world around them.</div>
                             <button class="select-btn">Select Emma →</button>
+                        </div>
+                    </div>
+                    <div class="character-card disabled">
+                        <img src="assets/images/Character - Luca.jpg" alt="Luca" class="character-image" onerror="this.style.display='none'">
+                        <div class="character-content">
+                            <div class="character-name">Luca</div>
+                            <div class="character-role">The young farmer</div>
+                            <div class="character-bio">Luca, 32, is a young, motivated farmer who inherited his family's farm in rural Netherlands. He wants to modernize his farm, produce sustainably, and run a profitable business—but these goals often compete. His journey makes him face tough decisions about what kind of farmer he wants to be.</div>
+                            <button class="select-btn">Coming Soon</button>
                         </div>
                     </div>
                     <div class="character-card disabled">
@@ -1039,6 +1061,7 @@
 
         <!-- Questions Panel -->
         <div class="questions-panel">
+            <img src="assets/images/rumigen-logo.png" alt="RUMIGEN" class="questions-logo">
             <div class="question-header">📍 LOCATION: Shopping Area</div>
             <div class="emma-intro">
                 <p><strong>Emma says:</strong> "Hey! I'm planning a dinner party tonight and I need your help deciding where to shop. I care about the environment, but I also need to be practical. What do you think I should do?"</p>
