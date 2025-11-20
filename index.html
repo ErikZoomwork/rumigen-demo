@@ -726,6 +726,12 @@
                 height: 100dvh;
                 padding: max(20px, env(safe-area-inset-top)) 20px max(30px, env(safe-area-inset-bottom)) 20px;
                 justify-content: flex-start;
+                opacity: 0;
+                transition: opacity 0.5s ease;
+            }
+
+            .questions-panel.show {
+                opacity: 1;
             }
 
             .question-header {
@@ -1430,6 +1436,16 @@
             setTimeout(() => {
                 document.getElementById('audioBtn').click();
             }, 500);
+            
+            // On mobile, show questions panel after Emma speaks for a while
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    document.querySelector('.questions-panel').classList.add('show');
+                }, 3000); // Show after 3 seconds
+            } else {
+                // On desktop, show immediately
+                document.querySelector('.questions-panel').classList.add('show');
+            }
         }
 
         // Setup scroll arrows for character selection
