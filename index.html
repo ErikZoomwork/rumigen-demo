@@ -670,16 +670,32 @@
             bottom: 0;
             right: 25%;
             transform: translateX(50%);
-            width: min(800px, 60vw);
+            width: min(800px, 50vw);
+            max-height: 100vh;
             height: 100vh;
             z-index: 250;
+        }
+
+        @media (max-width: 1200px) {
+            .emma-character {
+                width: min(600px, 45vw);
+            }
         }
 
         @media (max-width: 768px) {
             .emma-character {
                 right: 50%;
-                width: 80vw;
-                max-width: 400px;
+                width: 70vw;
+                max-width: 350px;
+                max-height: 85vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .emma-character {
+                width: 65vw;
+                max-width: 280px;
+                max-height: 70vh;
             }
         }
 
