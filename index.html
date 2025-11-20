@@ -113,6 +113,14 @@
             margin-bottom: 1rem;
         }
 
+        .character-logo {
+            max-width: 300px;
+            width: 60%;
+            height: auto;
+            margin: 0 auto 2rem auto;
+            display: block;
+        }
+
         .character-subtitle {
             text-align: center;
             color: #64748b;
@@ -239,6 +247,11 @@
         @media (max-width: 768px) {
             .character-container {
                 padding: 20px;
+            }
+
+            .character-logo {
+                max-width: 220px;
+                margin-bottom: 1.5rem;
             }
 
             .character-container h1 {
@@ -716,15 +729,15 @@
         @media (max-width: 768px) {
             .emma-character {
                 right: 50%;
-                width: 60vw;
-                max-height: 70vh;
+                width: 50vw;
+                max-height: 60vh;
             }
         }
 
         @media (max-width: 480px) {
             .emma-character {
-                width: 60vw;
-                max-height: 65vh;
+                width: 45vw;
+                max-height: 55vh;
             }
         }
 
@@ -866,6 +879,7 @@
     <!-- Character Selection Screen -->
     <div id="character-screen" class="screen">
         <div class="character-container">
+            <img src="assets/images/rumigen-logo.png" alt="RUMIGEN" class="character-logo">
             <h1>Select Your Character</h1>
             <p class="character-subtitle">Choose who you want to experience the journey as</p>
             <div class="character-selection-wrapper">
