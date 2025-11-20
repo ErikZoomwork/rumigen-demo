@@ -645,42 +645,70 @@
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .tradeoff-modal {
-                top: 0;
+                position: relative;
+                top: auto;
                 bottom: auto;
-                left: 0;
-                right: 0;
+                left: auto;
+                right: auto;
                 transform: none;
-                width: 100vw;
-                max-width: 100vw;
+                width: 100%;
+                max-width: 100%;
                 height: auto;
-                max-height: 50dvh;
+                max-height: none;
                 display: flex;
                 align-items: flex-start;
                 justify-content: flex-start;
-                padding: 0;
-                overflow: hidden;
+                padding: 10px;
+                overflow-y: auto;
                 z-index: 100;
+                box-sizing: border-box;
+                flex: 1;
+            }
+
+            .tradeoff-modal.active {
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100dvh;
+                padding: 0;
+                gap: 0;
+                box-sizing: border-box;
+                overflow: hidden;
+                z-index: 10000;
             }
 
             .tradeoff-content {
-                padding: 15px;
-                width: calc(100vw - 20px);
-                margin: 10px;
+                padding: 20px;
+                width: 100%;
+                height: 100%;
+                margin: 0;
                 box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                overflow: hidden;
+            }
+
+            .tradeoff-content > * {
+                flex-shrink: 1;
+                min-height: 0;
             }
 
             .tradeoff-title {
-                font-size: 14px;
+                font-size: clamp(12px, 3vw, 14px);
                 margin-bottom: 5px;
             }
 
             .tradeoff-choice {
-                font-size: 12px;
+                font-size: clamp(11px, 2.5vw, 12px);
                 margin-bottom: 4px;
             }
 
             .tradeoff-explanation {
-                font-size: 11px;
+                font-size: clamp(10px, 2.2vw, 11px);
                 line-height: 1.35;
             }
 
@@ -752,11 +780,13 @@
                 display: block;
             }
 
-            .restart-button {
-                bottom: 20px;
-                left: 20px;
-                padding: 12px 24px;
-                font-size: 14px;
+            .tradeoff-modal.active ~ .restart-button {
+                opacity: 1;
+                pointer-events: auto;
+                position: fixed;
+                bottom: 10px;
+                left: 10px;
+                z-index: 10001;
             }
         }
 
@@ -943,9 +973,7 @@
         }
 
         .restart-button {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
+            position: relative;
             background: #185285;
             color: white;
             border: none;
@@ -955,13 +983,15 @@
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 10px 30px rgba(24, 82, 133, 0.4);
-            z-index: 9999;
             transition: all 0.3s ease;
             opacity: 0;
             pointer-events: none;
+            flex-shrink: 0;
+            width: fit-content;
+            align-self: flex-start;
         }
 
-        .boerenkraam-container.active ~ .restart-button {
+        .boerenkraam-container.active ~ .left-column-wrapper .restart-button {
             opacity: 1;
             pointer-events: auto;
         }
@@ -975,22 +1005,39 @@
             display: none;
         }
 
-        /* Trade-off Banner */
-        .tradeoff-modal {
+        /* Left column wrapper for modal and restart button */
+        .left-column-wrapper {
             position: fixed;
             top: 0;
             left: 0;
-            width: 50vw;
+            width: max-content;
+            max-width: 25vw;
+            min-width: 280px;
             height: 100vh;
-            opacity: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 15px;
+            box-sizing: border-box;
             pointer-events: none;
             z-index: 10000;
+        }
+
+        .left-column-wrapper > * {
+            pointer-events: auto;
+        }
+
+        /* Trade-off Banner */
+        .tradeoff-modal {
+            position: relative;
+            width: 100%;
+            height: fit-content;
+            opacity: 0;
+            pointer-events: none;
             transition: opacity 0.5s ease;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 30px;
-            overflow-y: auto;
+            overflow: hidden;
         }
 
         @media (max-width: 768px) {
@@ -1002,6 +1049,60 @@
             }
         }
 
+        /* Make modal wider on short screens */
+        @media (max-height: 600px) {
+            .left-column-wrapper {
+                max-width: 35vw;
+            }
+            .tradeoff-content {
+                padding: 15px;
+            }
+            .tradeoff-title {
+                margin-bottom: 10px;
+            }
+            .tradeoff-choice {
+                margin-bottom: 8px;
+            }
+        }
+
+        @media (max-height: 500px) {
+            .left-column-wrapper {
+                max-width: 45vw;
+                padding: 15px;
+            }
+            .tradeoff-content {
+                padding: 12px;
+            }
+        }
+
+        @media (max-height: 400px) {
+            .left-column-wrapper {
+                max-width: 55vw;
+                padding: 12px;
+            }
+        }
+
+        @media (max-height: 350px) {
+            .left-column-wrapper {
+                max-width: 65vw;
+                padding: 10px;
+            }
+        }
+
+        @media (max-height: 300px) {
+            .left-column-wrapper {
+                max-width: 75vw;
+                padding: 10px;
+            }
+        }
+
+        @media (max-height: 250px) {
+            .left-column-wrapper {
+                max-width: 90vw;
+                padding: 8px;
+            }
+        }
+
         .tradeoff-modal.active {
             opacity: 1;
             pointer-events: auto;
@@ -1009,22 +1110,31 @@
 
         .tradeoff-content {
             background: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: block;
+            width: max-content;
+            max-width: 100%;
+            box-sizing: border-box;
+            height: fit-content;
+        }
+
+        .tradeoff-explanation {
+            width: 100%;
         }
 
         .tradeoff-title {
             font-size: 24px;
             color: #185285;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-weight: bold;
         }
 
         .tradeoff-choice {
             font-size: 19px;
             color: #2d3748;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             font-weight: 600;
         }
 
@@ -1205,7 +1315,21 @@
 
         <div class="pilot-badge">🎯 PILOT DEMO</div>
 
-        <button class="restart-button" id="restartBtn">Restart</button>
+        <!-- Left column wrapper for modal and restart button -->
+        <div class="left-column-wrapper">
+            <!-- Trade-off Modal -->
+            <div class="tradeoff-modal" id="tradeoffModal">
+                <div class="tradeoff-content">
+                    <div class="tradeoff-title">Emma's Choice: The Farmers Market</div>
+                    <div class="tradeoff-choice">Here's what I learned:</div>
+                    <div class="tradeoff-explanation">I contributed directly to small-scale farmers and chose fresh, seasonal food with a lower environmental footprint. The downside? It took more time and planning—especially since I needed a second stop to complete my grocery list.</div>
+                    <button class="continue-button" onclick="closeTradeoff()">Continue Emma's Story →</button>
+                </div>
+            </div>
+
+            <button class="restart-button" id="restartBtn">Restart</button>
+        </div>
+
         <button class="audio-control" id="audioBtn">Play Emma's Story</button>
 
         <!-- Emma Character -->
@@ -1280,18 +1404,6 @@
                         <span class="option-description">It's a bit further away and more expensive, but has probably almost all products and ingredients you need, and you would be supporting a local sustainable focused business.</span>
                     </span>
                 </div>
-            </div>
-        </div>
-
-        <!-- Trade-off Modal -->
-        <div class="tradeoff-modal" id="tradeoffModal">
-            <div class="tradeoff-content">
-                <div class="tradeoff-title">Emma's Choice: The Farmers Market</div>
-                <div class="tradeoff-choice">Here's what I learned:</div>
-                <div class="tradeoff-explanation">
-                    I contributed directly to small-scale farmers and chose fresh, seasonal food with a lower environmental footprint. The downside? It took more time and planning—especially since I needed a second stop to complete my grocery list.
-                </div>
-                <button class="continue-button" onclick="closeTradeoff()">Continue Emma's Story →</button>
             </div>
         </div>
     </div>
