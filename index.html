@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RUMIGEN Game - Emma's Story</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            overflow: hidden;
+        }
+
+        /* Screen Management */
+        .screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Welcome Screen */
+        #welcome-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+        }
+
+        .welcome-content {
+            text-align: center;
+            padding: 40px;
+            max-width: 900px;
+        }
+
+        .game-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1e3a8a;
+        }
+
+        .game-subtitle {
+            color: #64748b;
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1e3a8a 0%, #06b6d4 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        /* Character Selection Screen */
+        #character-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            padding: 40px;
+        }
+
+        .character-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .character-container h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            color: #1e3a8a;
+            margin-bottom: 1rem;
+        }
+
+        .character-subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .character-selection-wrapper {
+            position: relative;
+            margin-top: 2rem;
+        }
+
+        .character-grid {
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 20px 0;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .character-grid::-webkit-scrollbar {
+            display: none;
+        }
+
+        .character-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex: 0 0 calc(33.333% - 1.35rem);
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .character-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .character-card.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .character-card.disabled:hover {
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .character-image {
+            width: 100%;
+            aspect-ratio: 16/9;
+            max-height: 280px;
+            object-fit: contain;
+            object-position: center;
+            padding: 1.5rem;
+            background: white;
+        }
+
+        .character-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .character-name {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #1e3a8a;
+            margin-bottom: 0.25rem;
+        }
+
+        .character-role {
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        .character-bio {
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.65;
+            margin-bottom: 1.5rem;
+            flex: 1;
+        }
+
+        .select-btn {
+            display: block;
+            width: 100%;
+            background: #1e3a8a;
+            color: white;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .select-btn:hover {
+            background: #1e40af;
+        }
+
+        .character-card.disabled .select-btn {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+
+        .character-card.disabled .select-btn:hover {
+            background: #cbd5e0;
+        }
+
+        /* Mobile Responsive for Character Cards */
+        @media (max-width: 768px) {
+            .character-container {
+                padding: 20px;
+            }
+
+            .character-container h1 {
+                font-size: 1.75rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .character-subtitle {
+                font-size: 0.95rem;
+                margin-bottom: 1rem;
+            }
+
+            .character-grid {
+                gap: 1rem;
+                padding: 10px 0;
+            }
+
+            .character-card {
+                min-width: 260px;
+                flex: 0 0 85vw;
+                max-height: 70vh;
+            }
+
+            .character-image {
+                max-height: 180px;
+                padding: 1rem;
+            }
+
+            .character-content {
+                padding: 1rem;
+                overflow-y: auto;
+            }
+
+            .character-name {
+                font-size: 1.4rem;
+            }
+
+            .character-role {
+                font-size: 0.9rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .character-bio {
+                font-size: 0.85rem;
+                line-height: 1.5;
+                margin-bottom: 1rem;
+            }
+
+            .select-btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .nav-arrow {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .nav-arrow.left {
+                left: -15px;
+            }
+
+            .nav-arrow.right {
+                right: -15px;
+            }
+        }
+
+        /* Navigation Arrows */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: 2px solid #1e3a8a;
+            color: #1e3a8a;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            font-weight: bold;
+            z-index: 10;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-arrow:hover {
+            background: #1e3a8a;
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-arrow.left {
+            left: -25px;
+        }
+
+        .nav-arrow.right {
+            right: -25px;
+        }
+
+        .nav-arrow:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-arrow:disabled:hover {
+            background: white;
+            color: #1e3a8a;
+            transform: translateY(-50%);
+        }
+
+        /* Game Screen Styles */
+        #game-screen {
+            background: #87CEEB;
+        }
+
+        .parallax-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            transition: opacity 1.5s ease, transform 1.5s ease;
+        }
+
+        .parallax-container.fade-out {
+            opacity: 0;
+            transform: scale(1.05);
+        }
+
+        .parallax-layer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: auto;
+            height: 100vh;
+            display: flex;
+            white-space: nowrap;
+        }
+
+        .parallax-layer img,
+        .parallax-layer object {
+            height: 100vh;
+            width: auto;
+            pointer-events: none;
+            display: inline-block;
+            flex-shrink: 0;
+            vertical-align: bottom;
+        }
+
+        .layer-segment {
+            height: 100vh;
+            width: auto;
+            flex-shrink: 0;
+            position: relative;
+            display: inline-flex;
+            align-items: flex-end;
+        }
+
+        .layer-segment object,
+        .layer-segment img {
+            width: auto;
+            height: 100vh;
+            display: block;
+        }
+
+        /* Layer z-indices */
+        .layer-6 { z-index: 1; }
+        .layer-5 { z-index: 2; }
+        .layer-4 { z-index: 3; }
+        .layer-3 { z-index: 4; }
+        .layer-7 { z-index: 5; }
+        .layer-2 { z-index: 6; }
+        .layer-1 { z-index: 7; }
+
+        /* Animations */
+        @keyframes scrollRight {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @keyframes boerenkraamZoom {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .layer-1 { animation: scrollRight 40s linear infinite; }
+        .layer-2 { animation: scrollRight 50s linear infinite; }
+        .layer-7 { animation: scrollRight 55s linear infinite; }
+        .layer-3 { animation: scrollRight 50s linear infinite; }
+        .layer-4 { animation: scrollRight 80s linear infinite; }
+        .layer-5 { animation: scrollRight 100s linear infinite; }
+        .layer-6 { animation: scrollRight 120s linear infinite; }
+
+        /* Boerenkraam Scene */
+        .boerenkraam-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 200;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 1.5s ease, transform 1.5s ease;
+            pointer-events: none;
+        }
+
+        .boerenkraam-container.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .boerenkraam-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+        }
+
+        .boerenkraam-layer object {
+            width: 100%;
+            height: auto;
+            min-height: 100vh;
+            object-fit: cover;
+            object-position: bottom left;
+        }
+
+        .boerenkraam-container .layer-6 { z-index: 1; animation: boerenkraamZoom 40s ease-in-out infinite; }
+        .boerenkraam-container .layer-5 { z-index: 2; display: flex !important; width: auto !important; animation: scrollRight 40s linear infinite !important; }
+        .boerenkraam-container .layer-4 { z-index: 3; animation: boerenkraamZoom 25s ease-in-out infinite; }
+        .boerenkraam-container .layer-3 { z-index: 4; animation: boerenkraamZoom 25s ease-in-out infinite; }
+        .boerenkraam-container .layer-7 { z-index: 5; animation: boerenkraamZoom 25s ease-in-out infinite; }
+        .boerenkraam-container .layer-2 { z-index: 6; animation: boerenkraamZoom 20s ease-in-out infinite; }
+        .boerenkraam-container .layer-1 { z-index: 7; animation: boerenkraamZoom 20s ease-in-out infinite; }
+
+        .boerenkraam-container .layer-5 .layer-segment {
+            width: auto !important;
+            height: 100vh;
+            flex-shrink: 0;
+            display: inline-flex;
+        }
+
+        .boerenkraam-container .layer-5 .layer-segment object {
+            width: auto !important;
+            height: 100vh;
+            object-fit: contain !important;
+        }
+
+        /* Questions Panel */
+        .questions-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 50vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+            z-index: 300;
+            transition: opacity 0.8s ease;
+        }
+
+        .questions-panel.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .question-header {
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .emma-intro {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .emma-intro strong {
+            color: #667eea;
+        }
+
+        .question-text {
+            font-size: 22px;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-button {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px 25px;
+            display: flex;
+            align-items: flex-start;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .option-button.clickable:hover {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea08, #764ba208);
+            transform: translateX(5px);
+        }
+
+        .option-button.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f7fafc;
+        }
+
+        .option-label {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .option-button.locked .option-label {
+            background: #cbd5e0;
+        }
+
+        .option-text {
+            color: #2d3748;
+            font-size: 16px;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-title {
+            font-size: 19px;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+
+        .option-description {
+            font-size: 15px;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .questions-panel {
+                width: 100vw;
+                padding: 30px 20px;
+                justify-content: flex-start;
+                padding-top: 80px;
+            }
+
+            .question-header {
+                font-size: 12px;
+                margin-bottom: 15px;
+            }
+
+            .emma-intro {
+                padding: 15px;
+                margin-bottom: 20px;
+                font-size: 14px;
+            }
+
+            .question-text {
+                font-size: 18px;
+                margin-bottom: 20px;
+            }
+
+            .option-button {
+                padding: 15px 18px;
+                border-radius: 12px;
+            }
+
+            .option-label {
+                width: 30px;
+                height: 30px;
+                line-height: 30px;
+                font-size: 14px;
+                margin-right: 12px;
+            }
+
+            .option-text {
+                font-size: 14px;
+                line-height: 1.5;
+            }
+
+            .option-title {
+                font-size: 16px;
+            }
+
+            .option-description {
+                font-size: 13px;
+            }
+
+            .emma-character {
+                display: none;
+            }
+        }
+
+        /* Emma Character */
+        .emma-character {
+            position: fixed;
+            bottom: 0;
+            right: 25%;
+            transform: translateX(50%);
+            width: min(800px, 60vw);
+            height: 100vh;
+            z-index: 250;
+        }
+
+        @media (max-width: 768px) {
+            .emma-character {
+                right: 50%;
+                width: 80vw;
+                max-width: 400px;
+            }
+        }
+
+        .emma-layers {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .layer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+        }
+
+        .layer object {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            object-position: bottom;
+            pointer-events: none;
+            display: block;
+        }
+
+        .layer-base { z-index: 2; }
+        .layer-shirt { z-index: 5; }
+        .layer-eyes {
+            z-index: 3;
+            opacity: 0;
+        }
+        .layer-eyes.active { opacity: 1; }
+        
+        .layer-mouth {
+            z-index: 4;
+            opacity: 0;
+        }
+        .layer-mouth.active { opacity: 1; }
+
+        /* Controls */
+        .audio-control {
+            display: none;
+        }
+
+        .restart-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+            z-index: 9999;
+            transition: all 0.3s ease;
+        }
+
+        .restart-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(239, 68, 68, 0.5);
+        }
+
+        .pilot-badge {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 9998;
+        }
+
+        /* Trade-off Banner */
+        .tradeoff-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 700px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10000;
+            transition: opacity 0.5s ease;
+        }
+
+        .tradeoff-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .tradeoff-content {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            border-left: 5px solid #667eea;
+        }
+
+        .tradeoff-title {
+            font-size: 24px;
+            color: #667eea;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .tradeoff-choice {
+            font-size: 19px;
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .tradeoff-explanation {
+            font-size: 16px;
+            color: #4a5568;
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+
+        .continue-button {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="screen active">
+        <div class="welcome-content">
+            <h1 class="game-title">RUMIGEN Scenario Game</h1>
+            <p class="game-subtitle">An interactive exploration of food system values and trade-offs</p>
+            <button class="btn-primary" onclick="showCharacterSelection()">Start Game</button>
+        </div>
+    </div>
+
+    <!-- Character Selection Screen -->
+    <div id="character-screen" class="screen">
+        <div class="character-container">
+            <h1>Select Your Character</h1>
+            <p class="character-subtitle">Choose who you want to experience the journey as</p>
+            <div class="character-selection-wrapper">
+                <button class="nav-arrow left" id="scroll-left" aria-label="Scroll left">‹</button>
+                <div class="character-grid" id="character-grid">
+                    <div class="character-card disabled">
+                        <img src="assets/images/Character - Luca.jpg" alt="Luca" class="character-image" onerror="this.style.display='none'">
+                        <div class="character-content">
+                            <div class="character-name">Luca</div>
+                            <div class="character-role">The young farmer</div>
+                            <div class="character-bio">Luca, 32, is a young, motivated farmer who inherited his family's farm in rural Netherlands. He wants to modernize his farm, produce sustainably, and run a profitable business—but these goals often compete. His journey makes him face tough decisions about what kind of farmer he wants to be.</div>
+                            <button class="select-btn">Coming Soon</button>
+                        </div>
+                    </div>
+                    <div class="character-card" onclick="selectEmma()">
+                        <img src="assets/images/Character - Emma.jpg" alt="Emma" class="character-image" onerror="this.style.display='none'">
+                        <div class="character-content">
+                            <div class="character-name">Emma</div>
+                            <div class="character-role">The active citizen</div>
+                            <div class="character-bio">Emma, 28, lives in the city and works at an NGO with a focus on the environment. She enjoys cooking and browsing secondhand shops. Her friends come from all walks of life, and they often get into thoughtful (and fun) conversations about values, choices, and the world around them.</div>
+                            <button class="select-btn">Select Emma →</button>
+                        </div>
+                    </div>
+                    <div class="character-card disabled">
+                        <img src="assets/images/Character - Clara.jpg" alt="Clara" class="character-image" onerror="this.style.display='none'">
+                        <div class="character-content">
+                            <div class="character-name">Clara</div>
+                            <div class="character-role">The food entrepreneur</div>
+                            <div class="character-bio">Clara, 34, runs a small food production company producing artisan jams, chutneys, and sauces. She sources ingredients from local suppliers and sells at farmers markets and specialty stores. Clara constantly balances quality, sustainability, and staying competitive.</div>
+                            <button class="select-btn">Coming Soon</button>
+                        </div>
+                    </div>
+                    <div class="character-card disabled">
+                        <img src="assets/images/Character - Ahmed.jpg" alt="Dr. Ahmed" class="character-image" onerror="this.style.display='none'">
+                        <div class="character-content">
+                            <div class="character-name">Dr. Ahmed</div>
+                            <div class="character-role">The researcher</div>
+                            <div class="character-bio">Dr. Ahmed, 42, is a food systems researcher at a university. His work focuses on sustainable agriculture, climate resilience, and circular food systems. Ahmed bridges science and practice, navigating academic demands while trying to create real-world impact.</div>
+                            <button class="select-btn">Coming Soon</button>
+                        </div>
+                    </div>
+                    <div class="character-card disabled">
+                        <img src="assets/images/Character - Sofia.jpg" alt="Sofia" class="character-image" onerror="this.style.display='none'">
+                        <div class="character-content">
+                            <div class="character-name">Sofia</div>
+                            <div class="character-role">The policy maker</div>
+                            <div class="character-bio">Sofia, 38, works for the Ministry of Agriculture, Nature and Food Quality. She develops policies that shape the future of Dutch agriculture. Sofia balances environmental goals, economic viability, farmer concerns, and public opinion in every decision.</div>
+                            <button class="select-btn">Coming Soon</button>
+                        </div>
+                    </div>
+                </div>
+                <button class="nav-arrow right" id="scroll-right" aria-label="Scroll right">›</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen">
+        <!-- Supermarket Parallax -->
+        <div class="parallax-container">
+            <div class="parallax-layer layer-6">
+                <div class="layer-segment">
+                    <object data="SVG/Nieuw Supermarkt SVG/layer6-06-Background---kleur.svg" type="image/svg+xml"></object>
+                </div>
+                <div class="layer-segment">
+                    <object data="SVG/Nieuw Supermarkt SVG/layer6-06-Background---kleur.svg" type="image/svg+xml"></object>
+                </div>
+            </div>
+            <div class="parallax-layer layer-5">
+                <div class="layer-segment">
+                    <object data="SVG/Nieuw Supermarkt SVG/layer5-05-Wolken.svg" type="image/svg+xml"></object>
+                </div>
+                <div class="layer-segment">
+                    <object data="SVG/Nieuw Supermarkt SVG/layer5-05-Wolken.svg" type="image/svg+xml"></object>
+                </div>
+            </div>
+            <div class="parallax-layer layer-4">
+                <div class="layer-segment">
+                    <object data="SVG/Nieuw Supermarkt SVG/layer4-04-ShopAchterlaag.svg" type="image/svg+xml"></object>
+                </div>
+                <div class="layer-segment">
+                    <object data="SVG/Nieuw Supermarkt SVG/layer4-04-ShopAchterlaag.svg" type="image/svg+xml"></object>
+                </div>
+            </div>
+            <div class="parallax-layer layer-3">
+                <div class="layer-segment">
+                    <object data="SVG/Nieuw Supermarkt SVG/layer3-03-Winkels.svg" type="image/svg+xml"></object>
+                </div>
+                <div class="layer-segment">
+                    <object data="SVG/Nieuw Supermarkt SVG/layer3-03-Winkels.svg" type="image/svg+xml"></object>
+                </div>
+            </div>
+            <div class="parallax-layer layer-7">
+                <div class="layer-segment">
+                    <object data="SVG/Nieuw Supermarkt SVG/layer7-Objects.svg" type="image/svg+xml"></object>
+                </div>
+                <div class="layer-segment">
+                    <object data="SVG/Nieuw Supermarkt SVG/layer7-Objects.svg" type="image/svg+xml"></object>
+                </div>
+            </div>
+            <div class="parallax-layer layer-2">
+                <div class="layer-segment">
+                    <object data="SVG/Nieuw Supermarkt SVG/layer2-02-Voor-Objecten.svg" type="image/svg+xml"></object>
+                </div>
+                <div class="layer-segment">
+                    <object data="SVG/Nieuw Supermarkt SVG/layer2-02-Voor-Objecten.svg" type="image/svg+xml"></object>
+                </div>
+            </div>
+            <div class="parallax-layer layer-1">
+                <div class="layer-segment">
+                    <object data="SVG/Nieuw Supermarkt SVG/layer1-01-planten.svg" type="image/svg+xml"></object>
+                </div>
+                <div class="layer-segment">
+                    <object data="SVG/Nieuw Supermarkt SVG/layer1-01-planten.svg" type="image/svg+xml"></object>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boerenkraam Scene -->
+        <div class="boerenkraam-container">
+            <div class="boerenkraam-layer layer-6">
+                <object data="SVG/Boerenkraam/layer6-06-Background---kleur.svg" type="image/svg+xml"></object>
+            </div>
+            <div class="boerenkraam-layer layer-5">
+                <div class="layer-segment">
+                    <object data="SVG/Boerenkraam/layer5-05-Wolken.svg" type="image/svg+xml"></object>
+                </div>
+                <div class="layer-segment">
+                    <object data="SVG/Boerenkraam/layer5-05-Wolken.svg" type="image/svg+xml"></object>
+                </div>
+            </div>
+            <div class="boerenkraam-layer layer-4">
+                <object data="SVG/Boerenkraam/layer4-04-ShopAchterlaag.svg" type="image/svg+xml"></object>
+            </div>
+            <div class="boerenkraam-layer layer-3">
+                <object data="SVG/Boerenkraam/layer3-03-Winkels.svg" type="image/svg+xml"></object>
+            </div>
+            <div class="boerenkraam-layer layer-7">
+                <object data="SVG/Boerenkraam/layer7-Objects.svg" type="image/svg+xml"></object>
+            </div>
+            <div class="boerenkraam-layer layer-2">
+                <object data="SVG/Boerenkraam/layer2-02-Voor-Objecten.svg" type="image/svg+xml"></object>
+            </div>
+            <div class="boerenkraam-layer layer-1">
+                <object data="SVG/Boerenkraam/layer1-01-planten.svg" type="image/svg+xml"></object>
+            </div>
+        </div>
+
+        <div class="pilot-badge">🎯 PILOT DEMO</div>
+
+        <button class="restart-button" id="restartBtn">🔄 Restart</button>
+        <button class="audio-control" id="audioBtn">▶️ Play Emma's Story</button>
+
+        <!-- Emma Character -->
+        <div class="emma-character">
+            <div class="emma-layers">
+                <!-- Base layer - hoofd zonder mond -->
+                <div class="layer layer-base">
+                    <object data="SVG/Emma Hoofd/layer12-Emma-Hoofd-Zonder-mond.svg" type="image/svg+xml"></object>
+                </div>
+
+                <!-- Ogen opties -->
+                <div class="layer layer-eyes active" data-eyes="normal">
+                    <object data="SVG/Emma Hoofd/layer11-Emma-Ogen-01---Normaal.svg" type="image/svg+xml"></object>
+                </div>
+                <div class="layer layer-eyes" data-eyes="closed">
+                    <object data="SVG/Emma Hoofd/layer9-Emma-Ogen-02---Dicht.svg" type="image/svg+xml"></object>
+                </div>
+                <div class="layer layer-eyes" data-eyes="wide">
+                    <object data="SVG/Emma Hoofd/layer10-Emma-Ogen-03---Wijd.svg" type="image/svg+xml"></object>
+                </div>
+
+                <!-- Mond opties -->
+                <div class="layer layer-mouth" data-mouth="rest">
+                    <object data="SVG/Emma Hoofd/layer3-Emma-Mond-03---Neutraal-Dicht.svg" type="image/svg+xml"></object>
+                </div>
+                <div class="layer layer-mouth" data-mouth="AI">
+                    <object data="SVG/Emma Hoofd/layer5-Emma-Mond-02---BreedOpen.svg" type="image/svg+xml"></object>
+                </div>
+                <div class="layer layer-mouth" data-mouth="E">
+                    <object data="SVG/Emma Hoofd/layer6-Emma-Mond-01---SmalOpen.svg" type="image/svg+xml"></object>
+                </div>
+                <div class="layer layer-mouth active" data-mouth="smile">
+                    <object data="SVG/Emma Hoofd/layer2-Emma-Mond-05---Lach.svg" type="image/svg+xml"></object>
+                </div>
+
+                <!-- Shirt layer - voorop -->
+                <div class="layer layer-shirt">
+                    <object data="SVG/Emma Hoofd/layer1-Emma-Shirt.svg" type="image/svg+xml"></object>
+                </div>
+            </div>
+        </div>
+
+        <!-- Questions Panel -->
+        <div class="questions-panel">
+            <div class="question-header">📍 LOCATION: Shopping Area</div>
+            <div class="emma-intro">
+                <p><strong>Emma says:</strong> "Hey! I'm planning a dinner party tonight and I need your help deciding where to shop. I care about the environment, but I also need to be practical. What do you think I should do?"</p>
+            </div>
+            <div class="question-text">
+                Where should Emma go to shop for her dinner party?
+            </div>
+            <div class="options-container">
+                <div class="option-button clickable" data-option="A">
+                    <span class="option-label">A</span>
+                    <span class="option-text">
+                        <span class="option-title">The farmers market</span>
+                        <span class="option-description">It's the furthest away with mid-price produce. You would directly be supporting farmers from outside the city and get high-quality fresh produce, but you might need to stop by a second store after.</span>
+                    </span>
+                </div>
+                <div class="option-button locked" data-option="B">
+                    <span class="option-label">B</span>
+                    <span class="option-text">
+                        <span class="option-title">The chain supermarket store</span>
+                        <span class="option-description">It's cheaper, closest to your apartment and is guaranteed to have all products and ingredients you need.</span>
+                    </span>
+                </div>
+                <div class="option-button locked" data-option="C">
+                    <span class="option-label">C</span>
+                    <span class="option-text">
+                        <span class="option-title">The specialty store</span>
+                        <span class="option-description">It's a bit further away and more expensive, but has probably almost all products and ingredients you need, and you would be supporting a local sustainable focused business.</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trade-off Modal -->
+        <div class="tradeoff-modal" id="tradeoffModal">
+            <div class="tradeoff-content">
+                <div class="tradeoff-title">✨ Emma's Choice: The Farmers Market</div>
+                <div class="tradeoff-choice">Here's what I learned:</div>
+                <div class="tradeoff-explanation">
+                    I contributed directly to small-scale farmers and chose fresh, seasonal food with a lower environmental footprint. The downside? It took more time and planning—especially since I needed a second stop to complete my grocery list.
+                </div>
+                <button class="continue-button" onclick="closeTradeoff()">Continue Emma's Story →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Screen management
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function showCharacterSelection() {
+            showScreen('character-screen');
+        }
+
+        function selectEmma() {
+            showScreen('game-screen');
+            // Start audio automatically after a short delay
+            setTimeout(() => {
+                document.getElementById('audioBtn').click();
+            }, 500);
+        }
+
+        // Setup scroll arrows for character selection
+        function setupScrollArrows() {
+            const grid = document.getElementById('character-grid');
+            const leftArrow = document.getElementById('scroll-left');
+            const rightArrow = document.getElementById('scroll-right');
+
+            if (!grid || !leftArrow || !rightArrow) return;
+
+            leftArrow.addEventListener('click', () => {
+                grid.scrollBy({ left: -400, behavior: 'smooth' });
+            });
+
+            rightArrow.addEventListener('click', () => {
+                grid.scrollBy({ left: 400, behavior: 'smooth' });
+            });
+
+            function updateArrows() {
+                leftArrow.disabled = grid.scrollLeft <= 0;
+                rightArrow.disabled = grid.scrollLeft >= grid.scrollWidth - grid.clientWidth - 1;
+            }
+
+            grid.addEventListener('scroll', updateArrows);
+            updateArrows();
+        }
+
+        // Initialize scroll arrows when character screen is shown
+        document.addEventListener('DOMContentLoaded', () => {
+            setupScrollArrows();
+        });
+
+        // Audio and Emma animation
+        const mouthLayers = document.querySelectorAll('.layer-mouth');
+        const eyeLayers = document.querySelectorAll('.layer-eyes');
+
+        const voiceAudio = new Audio('Clipchamp/Effab - Emma - VO.mp3');
+        const payoffAudio = new Audio('Clipchamp/Emmas Choice.mp3');
+        const musicAudio = new Audio('Audio/297_full_cute-indy-girl_0140.mp3');
+        musicAudio.volume = 0.07;
+        musicAudio.loop = true;
+
+        let audioContext = null;
+        let analyser = null;
+        let voiceSource = null;
+        let audioInitialized = false;
+
+        function initAudio() {
+            if (audioInitialized) return;
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 512;
+            analyser.smoothingTimeConstant = 0.3;
+            voiceSource = audioContext.createMediaElementSource(voiceAudio);
+            voiceSource.connect(analyser);
+            voiceSource.connect(audioContext.destination);
+            audioInitialized = true;
+        }
+
+        const bufferLength = 256;
+        const dataArray = new Uint8Array(bufferLength);
+
+        let isPlaying = false;
+        let animationFrame = null;
+        let currentMouth = 'smile';
+        let currentEyes = 'normal';
+        let lastBlinkTime = 0;
+
+        function switchMouth(mouthName) {
+            if (currentMouth === mouthName) return;
+            mouthLayers.forEach(layer => layer.classList.remove('active'));
+            const selectedLayer = document.querySelector(`[data-mouth="${mouthName}"]`);
+            if (selectedLayer) {
+                selectedLayer.classList.add('active');
+            }
+            currentMouth = mouthName;
+        }
+
+        function switchEyes(eyesName) {
+            if (currentEyes === eyesName) return;
+            eyeLayers.forEach(layer => layer.classList.remove('active'));
+            const selectedLayer = document.querySelector(`[data-eyes="${eyesName}"]`);
+            if (selectedLayer) {
+                selectedLayer.classList.add('active');
+            }
+            currentEyes = eyesName;
+        }
+
+        function handleBlinking(now) {
+            const timeSinceLastBlink = now - lastBlinkTime;
+            const nextBlinkTime = 4000 + Math.random() * 4000;
+            
+            if (timeSinceLastBlink > nextBlinkTime) {
+                switchEyes('closed');
+                setTimeout(() => {
+                    if (isPlaying) {
+                        switchEyes('normal');
+                    }
+                }, 150);
+                lastBlinkTime = now;
+            }
+        }
+
+        function analyzeAudio() {
+            if (!analyser) return;
+            
+            analyser.getByteFrequencyData(dataArray);
+            const now = performance.now();
+            
+            const midFreq = dataArray.slice(10, 40).reduce((a, b) => a + b) / 30;
+            const voiceEnergy = midFreq / 255;
+            
+            if (voiceEnergy < 0.12) {
+                switchMouth('rest');
+            } else if (voiceEnergy < 0.28) {
+                switchMouth('E');
+            } else if (voiceEnergy < 0.50) {
+                switchMouth('AI');
+            } else {
+                switchMouth('AI');
+            }
+            
+            handleBlinking(now);
+            
+            if (isPlaying) {
+                animationFrame = requestAnimationFrame(analyzeAudio);
+            }
+        }
+
+        // Audio button
+        document.getElementById('audioBtn').addEventListener('click', () => {
+            if (!isPlaying) {
+                if (!audioInitialized) {
+                    initAudio();
+                }
+                audioContext.resume().then(() => {
+                    voiceAudio.play();
+                    musicAudio.play();
+                    
+                    isPlaying = true;
+                    document.getElementById('audioBtn').textContent = '⏸️ Pause';
+                    switchEyes('normal');
+                    lastBlinkTime = performance.now();
+                    analyzeAudio();
+                });
+            } else {
+                voiceAudio.pause();
+                musicAudio.pause();
+                isPlaying = false;
+                document.getElementById('audioBtn').textContent = '▶️ Play Emma\'s Story';
+                switchMouth('smile');
+                switchEyes('normal');
+                if (animationFrame) {
+                    cancelAnimationFrame(animationFrame);
+                }
+            }
+        });
+
+        // Question interaction
+        document.querySelectorAll('.option-button').forEach(button => {
+            button.addEventListener('click', function() {
+                if (this.classList.contains('clickable')) {
+                    const option = this.dataset.option;
+                    
+                    if (option === 'A') {
+                        // Stop Emma's voice-over
+                        voiceAudio.pause();
+                        voiceAudio.currentTime = 0;
+                        
+                        // Stop lip-sync animation
+                        isPlaying = false;
+                        switchMouth('smile');
+                        switchEyes('normal');
+                        if (animationFrame) {
+                            cancelAnimationFrame(animationFrame);
+                        }
+                        
+                        // Start payoff audio
+                        if (!audioInitialized) {
+                            initAudio();
+                        }
+                        
+                        // Setup payoff audio with lip-sync
+                        const payoffSource = audioContext.createMediaElementSource(payoffAudio);
+                        payoffSource.connect(analyser);
+                        payoffSource.connect(audioContext.destination);
+                        
+                        audioContext.resume().then(() => {
+                            payoffAudio.play();
+                            isPlaying = true;
+                            lastBlinkTime = performance.now();
+                            analyzeAudio();
+                        });
+                        
+                        document.querySelector('.questions-panel').classList.add('hidden');
+                        document.querySelector('.parallax-container').classList.add('fade-out');
+                        setTimeout(() => {
+                            document.querySelector('.boerenkraam-container').classList.add('active');
+                        }, 200);
+                        setTimeout(() => {
+                            document.getElementById('tradeoffModal').classList.add('active');
+                        }, 2000);
+                    }
+                }
+            });
+        });
+
+        function closeTradeoff() {
+            document.getElementById('tradeoffModal').classList.remove('active');
+            alert('In the full version, Emma would continue with her next question! 🎉');
+        }
+
+        // Restart button
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            location.reload();
+        });
+
+        voiceAudio.addEventListener('ended', () => {
+            isPlaying = false;
+            switchMouth('smile');
+            switchEyes('normal');
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+            }
+        });
+
+        payoffAudio.addEventListener('ended', () => {
+            isPlaying = false;
+            switchMouth('smile');
+            switchEyes('normal');
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+            }
+        });
+
+        switchMouth('smile');
+        switchEyes('normal');
+    </script>
+</body>
+</html>
