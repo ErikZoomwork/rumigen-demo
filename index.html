@@ -685,6 +685,7 @@
             .tradeoff-content {
                 padding: 25px;
                 width: 100%;
+                max-width: 100%;
                 height: auto;
                 margin: 0;
                 box-sizing: border-box;
@@ -692,11 +693,14 @@
                 flex-direction: column;
                 justify-content: flex-start;
                 overflow-y: visible;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .tradeoff-content > * {
-                flex-shrink: 1;
-                min-height: 0;
+                width: 100%;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .tradeoff-title {
